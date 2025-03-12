@@ -1,4 +1,5 @@
 import userModel from "../models/userModel.js";
+import multer from 'multer';
 
 export const getData = async (req, res) => {
     try {
