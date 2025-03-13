@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Configure CORS once with the necessary options
 app.use(cors({
-  origin: "http://localhost:3002", // if your frontend is on 3001, otherwise adjust accordingly
+  origin: "http://localhost:3000", // if your frontend is on 3001, otherwise adjust accordingly
   credentials: true,
 }));
 
@@ -35,6 +35,7 @@ app.use('/api/auth', authRouter);
 
 app.use('/api/prayers', prayersRouter);
 app.use("/api/users", userRoutes);
+
 
 app.listen(port, () => {
   console.log(`Hello Server Listening on ${port}`);
