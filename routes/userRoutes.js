@@ -1,112 +1,41 @@
 import express from 'express';
 import userAuth from '../middleware/userAuth.js';
 import { getData, Status_check } from '../controller/userController.js';
-import prayerGuidance from '../models/prayerGuidance.js';
-import multer from 'multer';
-import fs from 'fs';
-import path from 'path';
+import { createExercise, editExercise, deleteExercise ,getExercises  } from '../controller/exerciseController.js';
+
+import { createRecord, editRecord, deleteRecord } from '../controller/recordController.js';
+import { createMeal, editMeal, deleteMeal , Meal} from '../controller/mealController.js';
 
 const userRoutes = express.Router();
 
 // Middleware for authentication
 userRoutes.get('/data', userAuth, getData);
 userRoutes.put('/update-status', Status_check);
+//Exercise Routes 
 
-// ✅ Multer Storage Configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadPath = './uploads';
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
-});
-const upload = multer({ storage: storage });
+userRoutes.post('/create-exercise', userAuth, createExercise);
+userRoutes.get('/exercises', userAuth, getExercises);
 
-// ✅ Serve Static Files
-userRoutes.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+userRoutes.put('/edit-exercise/:id', userAuth, editExercise);
+userRoutes.delete('/delete-exercise/:id', userAuth, deleteExercise);
 
-// ✅ Get All Prayer Guidance
-userRoutes.get('/guidance', async (req, res) => {
-    try {
-        const guidance = await prayerGuidance.find();
-        return res.json(guidance);
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
+// Medical Records 
 
-// ✅ Create New Prayer Guidance
-userRoutes.post('/guidance', upload.single('image'), async (req, res) => {
-    try {
-        const { category, description } = req.body;
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: 'No file uploaded' });
-        }
-        
-        const imagePath = `/uploads/${req.file.filename}`;
-        const guidance = new prayerGuidance({ path: imagePath, category, description, fileName: req.file.filename });
+userRoutes.post('/create-record', userAuth, createRecord);
+userRoutes.put('/edit-record/:date', userAuth, editRecord);
+userRoutes.delete('/delete-record/:date', userAuth, deleteRecord);
 
-        await guidance.save();
-        return res.json({ success: true, message: 'Guidance added successfully' });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// ✅ Update Prayer Guidance
-userRoutes.put('/guidance/:id', upload.single('image'), async (req, res) => {
-    try {
-        const { category, description } = req.body;
-        const { id } = req.params;
-
-        const guidance = await prayerGuidance.findById(id);
-        if (!guidance) {
-            return res.status(404).json({ success: false, message: 'Post not found' });
-        }
-
-        // ✅ Remove old image if new image is uploaded
-        if (req.file) {
-            if (guidance.path && fs.existsSync(`.${guidance.path}`)) {
-                fs.unlinkSync(`.${guidance.path}`);
-            }
-            guidance.path = `/uploads/${req.file.filename}`;
-            guidance.fileName = req.file.filename;
-        }
-
-        guidance.category = category;
-        guidance.description = description;
-        await guidance.save();
-
-        return res.json({ success: true, message: 'Updated successfully' });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// ✅ Delete Prayer Guidance
-userRoutes.delete('/guidance/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const guidance = await prayerGuidance.findByIdAndDelete(id);
-        if (!guidance) {
-            return res.status(404).json({ success: false, message: 'Post not found' });
-        }
-
-        // ✅ Delete associated image
-        if (guidance.path && fs.existsSync(`.${guidance.path}`)) {
-            fs.unlinkSync(`.${guidance.path}`);
-        }
-
-        return res.json({ success: true, message: 'Deleted successfully' });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
-
+// // Meals 
+// userRoutes.get('/meals', userAuth, async (req, res) => {
+//     try {
+//         const meals = await mealModel.find({ user: req.body.userId });
+//         res.json({ success: true, meals });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// });
+userRoutes.get("/meals", userAuth, Meal); // Get meals
+userRoutes.post("/create-meal",userAuth, createMeal); // Create meal
+userRoutes.put("/edit-meal/:id", userAuth, editMeal); // Edit meal
+userRoutes.delete("/delete-meal/:id", userAuth, deleteMeal); 
 export default userRoutes;

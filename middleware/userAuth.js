@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 
 const userAuth = async (req, res, next)=>
 {
-    const {token} = req.cookies;
+    const token = req.cookies.token;
+    console.log(token)
     if(!token)
     {
         return res.json({success: false, message: 'Not Authorized login again'});
@@ -10,7 +12,7 @@ const userAuth = async (req, res, next)=>
     }
     try 
     {
-        const tokenDecode= jwt.verify(token, process.env.JWT_SECRET)
+        const tokenDecode= jwt.verify(token, 'secret@123')
         if(tokenDecode.id)
         {
             req.body.userId = tokenDecode.id;

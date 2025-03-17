@@ -6,7 +6,7 @@ export const getData = async (req, res) => {
         const users = await userModel.find({});
         
         if (!users || users.length === 0) {
-            return res.json({ success: false, message: "User Data not found" });
+            return res.json({ success: false, message: "User Data not found firstly signup" });
         }
 
         const userMap = users.map(user => ({
@@ -35,7 +35,7 @@ export  const Status_check =async (req, res) => {
       // ✅ Check karo user exist karta hai ya nahi
       const user = await userModel.findById(userId);
       if (!user) {
-        return res.status(404).json({ success: false, message: "User not found" });
+        return res.status(404).json({ success: false, message: "Signup up .User not found" });
       }
   
       user.status = status;

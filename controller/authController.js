@@ -22,7 +22,7 @@ export  const  register = async (req, res)=>
         await user.save();
         const token = jwt.sign({id: user._id},'secret@123',{expiresIn: '1h'});
         res.cookie('token', token, {
-            httpOnly: true,
+            
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV ==='production' ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
@@ -60,15 +60,15 @@ export const login = async (req, res) => {
       // Compare passwords (assuming your passwords are hashed)
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ success: false, message: "Invalid credentials" });
+        return res.status(401).json({ success: false, message: "Password does not match" });
       }
   
       // Generate a token (adjust secret & options as needed)
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
-  
+      const token = jwt.sign({ id: user._id }, 'secret@123', { expiresIn: '1h' });
+       console.log(token)
       // Optionally, set a cookie or return the token
-      res.cookie("token", token, {
-        httpOnly: true,
+      res.cookie('token', token, {
+        
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 3600000, // 1 hour
