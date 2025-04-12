@@ -13,8 +13,26 @@ userRoutes.get('/data', userAuth, getData);
 userRoutes.put('/update-status', Status_check);
 //Exercise Routes 
 
+<<<<<<< HEAD
 userRoutes.post('/create-exercise', userAuth, createExercise);
 userRoutes.get('/exercises', userAuth, getExercises);
+=======
+
+// ✅ Multer Storage Configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadPath = './uploads';
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+const upload = multer({ storage: storage });
+>>>>>>> 8bb15db (kshd)
 
 userRoutes.put('/edit-exercise/:id', userAuth, editExercise);
 userRoutes.delete('/delete-exercise/:id', userAuth, deleteExercise);

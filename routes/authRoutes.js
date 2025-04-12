@@ -1,6 +1,7 @@
 import express from 'express'
 import { login, register, logout, sendVerifyOtp, verifyEmail, sendResetOtp, resetPassword } from '../controller/authController.js';
 import userAuth from '../middleware/userAuth.js';
+
 const authRouter = express.Router();
 
 authRouter.post('/register', register);

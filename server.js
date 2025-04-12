@@ -7,6 +7,10 @@ import authRouter from './routes/authRoutes.js';
 import userRoutes from "./routes/userRoutes.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import PrayerSummarys from "./routes/prayers.js";
+
+
+
 const app = express();
 const port = process.env.PORT || 4000;
 const __filename = fileURLToPath(import.meta.url);
@@ -26,9 +30,19 @@ app.use(cors({
 
 
 
+
+
 // API Endpoints
 app.use('/api/auth', authRouter);
+<<<<<<< HEAD
+=======
+
+app.use('/api/prayers', PrayerSummarys);
+>>>>>>> 8bb15db (kshd)
 app.use("/api/users", userRoutes);
+
+
+
 
 
 app.listen(port, () => {
